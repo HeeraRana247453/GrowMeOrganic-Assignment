@@ -2,8 +2,7 @@
 
 ---
 
-```md
-# 🖼️ React Artworks Explorer
+## 🖼️ React Artworks Explorer
 
 A dynamic React + TypeScript web application built with **Vite** and **PrimeReact** to explore artworks using the [Art Institute of Chicago API](https://api.artic.edu/docs/#introduction). This app demonstrates **server-side pagination**, **row selection with persistence**, and a **custom overlay-based row selection panel**.
 
@@ -37,9 +36,10 @@ A dynamic React + TypeScript web application built with **Vite** and **PrimeReac
 - **HTTP**: Axios
 - **Styling**: PrimeFlex, Custom CSS
 
+
 ---
 
-## 🛠️ Getting Started
+### 🛠️ Getting Started
 
 ### 1. Clone the repo
 
@@ -103,7 +103,7 @@ src/
 
 ## 🙋‍♂️ Author
 
-- **Name**: Heera Rana
+- **Name**: Krishna Rajput
 - **GitHub**: [@HeeraRana247453](https://github.com/HeeraRana247453)
 
 ---
@@ -112,5 +112,3 @@ src/
 
 This project is for educational & assessment purposes only.
 ```
-
----
