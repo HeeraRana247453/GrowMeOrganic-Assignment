@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React,{useEffect,useState,useRef } from 'react';
+import  {DataTable,type DataTablePageEvent} from 'primereact/datatable';
+import {Column} from 'primereact/column';
+import  {Button} from 'primereact/button';
+import {OverlayPanel} from 'primereact/overlaypanel';
+import {InputNumber} from 'primereact/inputnumber';
+
 import axios from 'axios';
-import { DataTable, type DataTablePageEvent } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { OverlayPanel } from 'primereact/overlaypanel';
-import { Button } from 'primereact/button';
-import { InputNumber } from 'primereact/inputnumber';
 import './ArtworkTable.css';
 
 interface Artwork {
@@ -18,72 +19,73 @@ interface Artwork {
 }
 
 const ArtworkTable: React.FC = () => {
-  const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [selectedArtworks, setSelectedArtworks] = useState<{ [key: number]: Artwork }>({});
-  const [rowsToSelect, setRowsToSelect] = useState<number>(0);
+  const [tableData, setTableData] = useState< Artwork[]> ([]);
+  const [totalArtworkCount, setTotalArtworkCount] = useState(0);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const [selectedItems, setSelectedItems] = useState<{[key:number]: Artwork }>({});
+  const [rowsToSelect, setRowsToSelect] = useState< number>(0);
 
   const rowsPerPage = 10;
   const overlayRef = useRef<OverlayPanel>(null);
 
   const fetchArtworks = async (pageNumber: number) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(
-        `https://api.artic.edu/api/v1/artworks?page=${pageNumber + 1}&limit=${rowsPerPage}`
-      );
-      setArtworks(response.data.data);
-      setTotalRecords(response.data.pagination.total);
-    } catch (err) {
-      console.error('Error fetching data:', err);
-    } finally {
-      setLoading(false);
+    setIsLoading(true);
+    try{
+      const response = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${pageNumber+1}&limit=${rowsPerPage}`);
+      setTableData(response.data.data);
+      setTotalArtworkCount(response.data.pagination.total);
+    } 
+    catch(err) {
+      console.error('Error in fetching data:', err);
+    } 
+    finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchArtworks(page);
-  }, [page]);
+    fetchArtworks(currentPage);
+  },[currentPage]);
 
   const onPage = (e: DataTablePageEvent) => {
-    setPage(e.page ?? 0);
+    setCurrentPage(e.page ?? 0);
   };
 
 
   const handleSelectionChange = (e: { value: Artwork[] }) => {
-    const updatedGlobalSelection = { ...selectedArtworks };
+    const updatedGlobalSelection = { ...selectedItems };
 
     e.value.forEach((art) => {
       updatedGlobalSelection[art.id] = art;
     });
 
-    artworks.forEach((art) => {
+    tableData.forEach((art) => {
       const stillSelected = e.value.find((a) => a.id === art.id);
       if (!stillSelected) {
         delete updatedGlobalSelection[art.id];
       }
     });
 
-    setSelectedArtworks(updatedGlobalSelection);
+    setSelectedItems(updatedGlobalSelection);
   };
 
-  const selectedOnCurrentPage = artworks.filter((art) => selectedArtworks[art.id]);
+  const selectedOnCurrentPage = tableData.filter((art) => selectedItems[art.id]);
 
-  const handleSelectRowsSubmit = () => {
+  const handleSelectRowsSubmit = async () => {
     const toSelect = rowsToSelect;
-    const updated = { ...selectedArtworks };
+    const updated: { [key: number]: Artwork } = {};
+    // const updated = {...selectedItems};
 
     let selectedCount = 0;
-    let tempPage = page;
+    let tempPage = currentPage;
 
     const selectRows = async () => {
-      while (selectedCount < toSelect && tempPage * rowsPerPage < totalRecords) {
-        const res = await axios.get(
-          `https://api.artic.edu/api/v1/artworks?page=${tempPage + 1}&limit=${rowsPerPage}`
-        );
-        const data: Artwork[] = res.data.data;
+      while (selectedCount < toSelect && tempPage*rowsPerPage < totalArtworkCount){
+        const res = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${tempPage + 1}&limit=${rowsPerPage}`);
+        const data:Artwork[] = res.data.data;
 
         for (let i = 0; i < data.length && selectedCount < toSelect; i++) {
           updated[data[i].id] = data[i];
@@ -92,16 +94,16 @@ const ArtworkTable: React.FC = () => {
 
         tempPage++;
       }
-      setSelectedArtworks(updated);
+      setSelectedItems(updated);
     };
 
-    selectRows();
+    await selectRows();
     overlayRef.current?.hide();
   };
 
   const header = (
-    <div className="mb-3">
-      <h3>Selected Artworks: {Object.keys(selectedArtworks).length}</h3>
+    <div className="mb-3 text-center">
+      <h3>Selected Artworks: {Object.keys(selectedItems).length}</h3>
     </div>
   );
 
@@ -119,44 +121,45 @@ const ArtworkTable: React.FC = () => {
       {header}
 
       <OverlayPanel ref={overlayRef} showCloseIcon>
-        <div className="p-2" style={{ minWidth: '200px' }}>
-          <h4>Enter Rows</h4>
+        <div className="p-2 " style={{minWidth: '205px'}}>
+          <h4>Enter No. of Rows</h4>
           <InputNumber
+            className=" mb-2"
+            placeholder="Enter number of rows"
             value={rowsToSelect}
             onValueChange={(e) => setRowsToSelect(e.value ?? 0)}
             showButtons
             min={1}
-            max={totalRecords}
-            placeholder="Enter number of rows"
-            className=" mb-2"
-          /><br/>
+            max={totalArtworkCount}
+          />
+          <br/>
           <Button label="Submit" onClick={handleSelectRowsSubmit} className="" />
         </div>
       </OverlayPanel>
 
       <DataTable
-        value={artworks}
+        className="artwork-table-wrapper"
+        value={tableData}
         selection={selectedOnCurrentPage}
+        rows={rowsPerPage}
+        totalRecords={totalArtworkCount}
+        loading={isLoading}
+        first={currentPage*rowsPerPage}
         onSelectionChange={handleSelectionChange}
+        onPage={onPage}
         selectionMode="multiple"
         dataKey="id"
         lazy
         paginator
-        rows={rowsPerPage}
-        totalRecords={totalRecords}
-        loading={loading}
-        first={page * rowsPerPage}
-        onPage={onPage}
-        className="artwork-table-wrapper"
       >
-        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-        <Column header={customChevronColumn} body={() => null} headerStyle={{ width: '3rem' }}></Column>
+        <Column selectionMode="multiple" headerStyle={{width:'3rem'}}></Column>
+        <Column header={customChevronColumn} body={() => null} headerStyle={{width:'3rem'}}></Column>
         <Column field="title" header="Title" />
         <Column field="place_of_origin" header="Origin" />
         <Column field="artist_display" header="Artist" />
         <Column field="inscriptions" header="Inscriptions" />
-        <Column field="date_start" header="Start Date" />
-        <Column field="date_end" header="End Date" />
+        <Column field="date_start" header="Start-Date" />
+        <Column field="date_end" header="End-Date" />
       </DataTable>
     </div>
   );
