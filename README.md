@@ -77,11 +77,11 @@ The app is deployed on **Netlify** and publicly accessible:
 ```
 src/
 ├── components/
-│   └── ArtworkTable.tsx
-├── styles/
+│   ├── ArtworkTable.tsx
 │   └── ArtworkTable.css
 ├── App.tsx
-└── main.tsx
+├── main.tsx
+└── index.css
 ```
 
 ---
@@ -103,12 +103,5 @@ src/
 
 ## 🙋‍♂️ Author
 
-- **Name**: Krishna Rajput
+- **Name**: Heera Rana
 - **GitHub**: [@HeeraRana247453](https://github.com/HeeraRana247453)
-
----
-
-## 📃 License
-
-This project is for educational & assessment purposes only.
-```
