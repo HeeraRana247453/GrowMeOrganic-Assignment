@@ -44,8 +44,8 @@ A dynamic React + TypeScript web application built with **Vite** and **PrimeReac
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/react-artworks-explorer.git
-cd react-artworks-explorer
+git clone https://github.com/HeeraRana247453/GrowMeOrganic-Assignment.git
+cd GrowMeOrganic-Assignment
 ```
 
 ### 2. Install dependencies
@@ -60,7 +60,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser to view it.
+Open [Localhost](http://localhost:5173) in your browser to view it.
 
 ---
 
@@ -68,7 +68,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser to view it.
 
 The app is deployed on **Netlify** and publicly accessible:
 
-🔗 [Live Demo](https://your-live-app-url.netlify.app)
+🔗 [Live Demo](https://gleeful-beijinho-4289a9.netlify.app/)
 
 ---
 
