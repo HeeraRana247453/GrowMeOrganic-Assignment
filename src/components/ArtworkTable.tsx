@@ -37,6 +37,7 @@ const ArtworkTable: React.FC = () => {
       const response = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${pageNumber+1}&limit=${rowsPerPage}`);
       setTableData(response.data.data);
       setTotalArtworkCount(response.data.pagination.total);
+      handleSelectRowsSubmit();
     } 
     catch(err) {
       console.error('Error in fetching data:', err);
@@ -79,11 +80,11 @@ const ArtworkTable: React.FC = () => {
     const updated: { [key: number]: Artwork } = {};
     // const updated = {...selectedItems};
 
-    let selectedCount = 0;
+    let selectedCount = rowsPerPage*(currentPage);
     let tempPage = currentPage;
 
     const selectRows = async () => {
-      while (selectedCount < toSelect && tempPage*rowsPerPage < totalArtworkCount){
+    //   while (selectedCount < toSelect && tempPage*rowsPerPage < totalArtworkCount){
         const res = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${tempPage + 1}&limit=${rowsPerPage}`);
         const data:Artwork[] = res.data.data;
 
@@ -92,8 +93,9 @@ const ArtworkTable: React.FC = () => {
           selectedCount++;
         }
 
-        tempPage++;
-      }
+    //     tempPage++;
+    //   }
+
       setSelectedItems(updated);
     };
 
@@ -103,7 +105,8 @@ const ArtworkTable: React.FC = () => {
 
   const header = (
     <div className="mb-3 text-center">
-      <h3>Selected Artworks: {Object.keys(selectedItems).length}</h3>
+      {/* <h3>Selected Artworks: {Object.keys(selectedItems).length}</h3> */}
+      <h3>Selected Artworks: {rowsToSelect}</h3>
     </div>
   );
 
