@@ -37,7 +37,6 @@ const ArtworkTable: React.FC = () => {
       const response = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${pageNumber+1}&limit=${rowsPerPage}`);
       setTableData(response.data.data);
       setTotalArtworkCount(response.data.pagination.total);
-      handleSelectRowsSubmit();
     } 
     catch(err) {
       console.error('Error in fetching data:', err);
@@ -49,6 +48,7 @@ const ArtworkTable: React.FC = () => {
 
   useEffect(() => {
     fetchArtworks(currentPage);
+    handleSelectRowsSubmit();
   },[currentPage]);
 
   const onPage = (e: DataTablePageEvent) => {
